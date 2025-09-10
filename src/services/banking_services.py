@@ -197,12 +197,18 @@ class BankingService:
         return max(self.accounts.values(), key=lambda acc: acc.age)
 
     def simple_interest(self, account_number, rate, years):
+        from decimal import Decimal, InvalidOperation
         acc = self.get_account(account_number)
         if not acc:
-            return 0
-        principal = acc.balance
-        interest = (principal * Decimal(str(rate)) * Decimal(str(years))) / Decimal("100")
-        return round(interest, 2)
+            return None, "Account not found"
+        try:
+            principal = Decimal(str(acc.balance))
+            rate = Decimal(str(rate))
+            years = Decimal(str(years))
+        except (InvalidOperation, ValueError):
+            return None, "Invalid input: Please enter valid numbers for rate and years."
+        interest = (principal * rate * years) / Decimal("100")
+        return float(interest), f"Simple Interest for {years} years at {rate}%: {float(interest)}"
 
     def export_accounts_to_file(self):
         export_accounts(self.accounts)

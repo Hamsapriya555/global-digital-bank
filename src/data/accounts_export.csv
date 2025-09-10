@@ -1,0 +1,4 @@
+account_number,name,age,balance,account_type,status,pin,transaction_history,daily_total,last_transaction_date
+1001,Hamsa,20,200000.0,Current,Active,2005,[],0.0,
+1002,Thanu,22,2004.0,Savings,Active,2004,[],0.0,
+1003,Ruksana,21,500000.0,Current,Active,2003,[],0.0,

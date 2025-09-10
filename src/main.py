@@ -79,10 +79,10 @@ def main():
         elif choice == "6":
             action = input("Type 'save' to save or 'load' to load accounts: ").strip().lower()
             if action == "save":
-                ok, msg = bank.save_accounts_to_file()
+                ok, msg = bank.export_accounts_to_file()
                 print(msg)
             elif action == "load":
-                ok, msg = bank.load_accounts_from_file()
+                ok, msg = bank.import_accounts_from_file()
                 print(msg)
             else:
                 print("Invalid action.")
@@ -194,8 +194,8 @@ def main():
             acc_no = input("Enter account number: ")
             rate = input("Enter annual interest rate (e.g., 5 for 5%): ")
             years = input("Enter number of years: ")
-            interest = bank.simple_interest(acc_no, rate, years)
-            print(f"Simple interest: {interest}")
+            interest, msg = bank.simple_interest(acc_no, rate, years)
+            print(msg)
 
         elif choice == "25":
             ok, msg = bank.export_accounts_to_file()
@@ -218,12 +218,12 @@ def main():
             print(msg)
 
         elif choice == "29":
-            ok, msg = bank.save_accounts_to_file()
+            ok, msg = bank.export_accounts_to_file()
             print("All changes saved. Exiting system.")
             break
 
         elif choice == "0":
-            ok, msg = bank.save_accounts_to_file()
+            ok, msg = bank.export_accounts_to_file()
             print("Thank you for visiting GlobalDigital Bank. All changes saved.")
             break
 
