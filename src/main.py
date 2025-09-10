@@ -79,10 +79,10 @@ def main():
         elif choice == "6":
             action = input("Type 'save' to save or 'load' to load accounts: ").strip().lower()
             if action == "save":
-                ok, msg = bank.save_accounts_to_file()
+                ok, msg = bank.export_accounts_to_file()
                 print(msg)
             elif action == "load":
-                ok, msg = bank.load_accounts_from_file()
+                ok, msg = bank.import_accounts_from_file()
                 print(msg)
             else:
                 print("Invalid action.")
