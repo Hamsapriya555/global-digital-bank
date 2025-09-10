@@ -80,7 +80,7 @@ global-digital-bank/
 │── README.md # Documentation
 │── LICENSE # MIT License
 
-## ⚡ Installation
+⚡ Installation
 ```bash
 # Clone repository
 git clone https://github.com/Thanushreems2005/global-digital-bank.git
@@ -101,8 +101,6 @@ Copy code
 python main.py
 
 🏦 Sample Workflow
-mathematica
-Copy code
 --- Welcome to Global Digital Bank ---
 1) Create Account
 2) Deposit
