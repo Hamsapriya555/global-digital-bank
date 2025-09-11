@@ -1,4 +1,5 @@
 from services.banking_services import BankingService
+import getpass
 
 def main():
     bank = BankingService()
@@ -44,7 +45,7 @@ def main():
             age = input("Enter age: ")
             acc_type = input("Enter account type (Savings/Current): ")
             initial = input("Initial Deposit amount: ")
-            pin = input("Set a 4-digit PIN: ")
+            pin = getpass.getpass("Set a 4-digit PIN: ")
             acc, msg = bank.create_account(name, age, acc_type, initial, pin)
             print(msg)
             if acc:
@@ -52,27 +53,27 @@ def main():
 
         elif choice == "2":
             acc_no = input("Enter account number: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             amount = input("Enter amount to deposit: ")
             ok, msg = bank.deposit(acc_no, amount, pin)
             print(msg)
 
         elif choice == "3":
             acc_no = input("Enter your account number: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             amount = input("Enter amount to withdraw: ")
             ok, msg = bank.withdraw(acc_no, amount, pin)
             print(msg)
 
         elif choice == "4":
             acc_no = input("Enter Account Number: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             acc, msg = bank.balance_inquiry(acc_no, pin)
             print(acc if acc else msg)
 
         elif choice == "5":
             acc_no = input("Enter account number to close: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             ok, msg = bank.close_account(acc_no, pin)
             print(msg)
 
@@ -166,7 +167,7 @@ def main():
 
         elif choice == "19":
             from_acc = input("From Account Number: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             to_acc = input("To Account Number: ")
             amount = input("Amount to transfer: ")
             ok, msg = bank.transfer_funds(from_acc, to_acc, amount, pin)
@@ -207,7 +208,7 @@ def main():
 
         elif choice == "27":
             acc_no = input("Enter account number: ")
-            pin = input("Enter PIN: ")
+            pin = getpass.getpass("Enter PIN: ")
             ok, msg = bank.verify_pin(acc_no, pin)
             print(msg)
 
