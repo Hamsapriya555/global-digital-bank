@@ -15,6 +15,7 @@ DATA_DIR = os.environ.get("GDB_DATA_DIR", os.path.join(BASE_DIR, "data"))
 ACCOUNT_FILE = os.path.join(DATA_DIR, "accounts.csv")
 TRANSACTIONS_FILE = os.path.join(DATA_DIR, "transactions.log")
 EXPORT_FILE = os.path.join(DATA_DIR, "accounts_export.csv")
+ACTIONS_FILE = os.path.join(DATA_DIR, "actions.log")
 
 CSV_HEADER = [
     "account_number", "name", "age", "balance", "account_type", "status", "pin",
@@ -90,6 +91,10 @@ def log_transaction(account_number: int, operation: str, amount: Optional[float]
     Append a transaction entry to the transactions log file.
     """
     try:
+        # Only log actual money transactions
+        money_ops = {"DEPOSIT", "WITHDRAW", "TRANSFER_IN", "TRANSFER_OUT"}
+        if operation not in money_ops:
+            return
         os.makedirs(os.path.dirname(TRANSACTIONS_FILE), exist_ok=True)
         with open(TRANSACTIONS_FILE, "a") as f:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -97,6 +102,19 @@ def log_transaction(account_number: int, operation: str, amount: Optional[float]
         logging.info(f"Transaction logged for account {account_number}.")
     except Exception as e:
         logging.error(f"Failed to log transaction: {e}")
+
+def log_action(account_number: int, operation: str, details: Optional[str] = None) -> None:
+    """
+    Log non-money actions (like RENAME, CREATE, CLOSE, etc.) to actions.log.
+    """
+    try:
+        os.makedirs(os.path.dirname(ACTIONS_FILE), exist_ok=True)
+        with open(ACTIONS_FILE, "a") as f:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"{timestamp} | {account_number} | {operation} | {details or ''}\n")
+        logging.info(f"Action logged for account {account_number}.")
+    except Exception as e:
+        logging.error(f"Failed to log action: {e}")
 
 def export_accounts(accounts: Dict[int, Account]) -> bool:
     """

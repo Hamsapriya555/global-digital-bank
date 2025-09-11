@@ -1,6 +1,7 @@
 from decimal import Decimal, InvalidOperation
 from enum import Enum
 from datetime import date
+from typing import List, Optional, Dict, Any
 
 class AccountType(Enum):
     SAVINGS = "Savings"
@@ -12,7 +13,7 @@ class AccountStatus(Enum):
 
 class Account:
     """
-    Represents a bank account with basic operations.
+    Represents a bank account with basic operations, transaction history, and daily limits.
     """
     MIN_BALANCE = {
         AccountType.SAVINGS.value: Decimal("500"),
@@ -29,10 +30,10 @@ class Account:
         account_type: str,
         balance: float = 0.0,
         status: str = "Active",
-        pin: str = None,
-        transaction_history=None,
-        daily_total=0.0,
-        last_transaction_date=None
+        pin: Optional[str] = None,
+        transaction_history: Optional[List[Dict[str, Any]]] = None,
+        daily_total: float = 0.0,
+        last_transaction_date: Optional[str] = None
     ):
         self.account_number = int(account_number)
         self.name = name.strip()
@@ -46,12 +47,14 @@ class Account:
             raise ValueError(f"Invalid status: {self.status}")
         self.pin = pin  # Consider hashing in production
 
-        # New fields for extended features
         self.transaction_history = transaction_history if transaction_history is not None else []
         self.daily_total = Decimal(str(daily_total))
         self.last_transaction_date = last_transaction_date
 
-    def deposit(self, amount) -> tuple[bool, str]:
+    def deposit(self, amount: float) -> tuple[bool, str]:
+        """
+        Deposit money into the account, enforcing daily and per-transaction limits.
+        """
         try:
             amount = Decimal(str(amount))
         except (TypeError, ValueError, InvalidOperation):
@@ -65,7 +68,6 @@ class Account:
         if amount > Account.MAX_SINGLE_DEPOSIT:
             return False, f"Deposit exceeds single-deposit limit {Account.MAX_SINGLE_DEPOSIT}"
 
-        # Daily transaction limit check
         today = str(date.today())
         if self.last_transaction_date != today:
             self.daily_total = Decimal("0.0")
@@ -80,7 +82,10 @@ class Account:
         )
         return True, f"Deposit Successful.\nNew Balance: {self.balance}"
     
-    def withdraw(self, amount) -> tuple[bool, str]:
+    def withdraw(self, amount: float) -> tuple[bool, str]:
+        """
+        Withdraw money from the account, enforcing minimum balance and daily limits.
+        """
         try:
             amount = Decimal(str(amount))
         except (TypeError, ValueError, InvalidOperation):
@@ -95,7 +100,6 @@ class Account:
         if self.balance - amount < min_required:
             return False, f"Insufficient funds. Minimum required balance for {self.account_type}: {min_required}"
 
-        # Daily transaction limit check
         today = str(date.today())
         if self.last_transaction_date != today:
             self.daily_total = Decimal("0.0")
@@ -111,6 +115,9 @@ class Account:
         return True, f"Withdrawal successful.\nNew Balance: {self.balance}"
     
     def to_dict(self) -> dict:
+        """
+        Serialize the account to a dictionary for file operations.
+        """
         return {
             "account_number": self.account_number,
             "name": self.name,
@@ -126,4 +133,3 @@ class Account:
     
     def __str__(self) -> str:
         return f"[{self.account_number}] {self.name} ({self.account_type}) - Balance: {self.balance} - {self.status}"
-    

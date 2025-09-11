@@ -1,5 +1,5 @@
 from models.account import Account
-from utils.file_manager import load_accounts, save_accounts, log_transaction, export_accounts, import_accounts, write_transaction_log_file, read_transaction_history
+from utils.file_manager import load_accounts, save_accounts, log_transaction, export_accounts, import_accounts, write_transaction_log_file, read_transaction_history, log_action
 from decimal import Decimal
 
 class BankingService:
@@ -31,7 +31,7 @@ class BankingService:
         acc = Account(acc_no, name, age, account_type, balance=float(initial_deposit), pin=pin)
         self.accounts[acc_no] = acc
         self.next_account_number += 1
-        log_transaction(acc_no, "CREATE", initial_deposit, acc.balance)
+        log_action(acc_no, "CREATE", f"Name: {name}, Age: {age}, Type: {account_type}")
         self.save_to_disk()
         return acc, "Account created successfully"
 
@@ -81,7 +81,7 @@ class BankingService:
         if not self.verify_pin(account_number, pin)[0]:
             return False, "Invalid PIN"
         acc.status = "Inactive"
-        log_transaction(acc.account_number, "CLOSE", None, acc.balance)
+        log_action(acc.account_number, "CLOSE", "Account closed")
         self.save_to_disk()
         return True, "Account closed successfully"
 
@@ -106,7 +106,7 @@ class BankingService:
         if acc.status == "Active":
             return False, "Account is already active"
         acc.status = "Active"
-        log_transaction(acc.account_number, "REOPEN", None, acc.balance)
+        log_action(acc.account_number, "REOPEN", "Account reopened")
         self.save_to_disk()
         return True, "Account reopened successfully"
 
@@ -117,7 +117,7 @@ class BankingService:
         if acc.status != "Active":
             return False, "Account is not Active"
         acc.name = new_name.strip()
-        log_transaction(acc.account_number, "RENAME", None, acc.balance)
+        log_action(acc.account_number, "RENAME", f"New name: {new_name.strip()}")
         self.save_to_disk()
         return True, "Account holder renamed successfully"
 
@@ -238,7 +238,7 @@ class BankingService:
         if new_type not in Account.MIN_BALANCE:
             return False, "Invalid account type"
         acc.account_type = new_type
-        log_transaction(acc.account_number, "UPGRADE_TYPE", None, acc.balance)
+        log_action(acc.account_number, "UPGRADE_TYPE", f"New type: {new_type}")
         self.save_to_disk()
         return True, f"Account type upgraded to {new_type}"
     
